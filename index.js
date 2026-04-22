@@ -10,12 +10,12 @@ app.use(express.static('public'));
 app.get('/categoria', (req, res) => {
     db.query('SELECT * FROM categoria', (err, result) => {
         if (err) {
-            console.log(err);
-            return res.status(500).json({ error: "Error DB" });
+            console.error("ERROR REAL:", err);
+            return res.status(500).json({ error: err.message });
         }
         return res.json(result);
     });
-});
+})
 
 
 app.get('/categoria-id/:id', (req, res) => {
