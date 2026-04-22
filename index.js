@@ -9,7 +9,10 @@ app.use(express.static('public'));
 
 app.get('/categoria', (req, res) => {
     db.query('SELECT * FROM categoria', (err, result) => {
-        if (err) return res.json(err);
+        if (err) {
+            console.log(err);
+            return res.status(500).json({ error: "Error DB" });
+        }
         return res.json(result);
     });
 });
