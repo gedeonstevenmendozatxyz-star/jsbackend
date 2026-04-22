@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 3127;
+const port = process.env.PORT || 3127;
 
 app.use(express.json());
 
