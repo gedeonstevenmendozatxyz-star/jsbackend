@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Categorías</title>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+<div class="container">
+
+<h2>Gestión de Categorías</h2>
+
+<div class="formulario">
+    <input type="hidden" id="id">
+    <input type="text" id="descripcion" placeholder="Nueva descripción">
+    <button class="btn-guardar" onclick="guardar()">Guardar</button>
+    <button class="btn-actualizar" onclick="actualizar()">Actualizar</button>
+</div>
+
+<h3>Lista de Categorías</h3>
+
+<ul id="lista"></ul>
+
+</div>
+
+<script>
+
+function cargar(){
+    fetch('/categoria')
+    .then(res => res.json())
+    .then(data => {
+        let lista = document.getElementById('lista');
+        lista.innerHTML = '';
+
+        data.forEach(cat => {
+            lista.innerHTML += `
+            <li>
+                <span>${cat.descripcion}</span>
+                <div class="acciones">
+                    <button class="btn-editar" onclick="editar(${cat.id_categoria},'${cat.descripcion}')">Editar</button>
+                    <button class="btn-eliminar" onclick="eliminar(${cat.id_categoria})">Eliminar</button>
+                </div>
+            </li>
+            `;
+        });
+    });
+}
+
+function guardar(){
+    let descripcion = document.getElementById('descripcion').value;
+
+    fetch('/categoria-insertar',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({descripcion})
+    })
+    .then(()=> {
+        cargar();
+        limpiar();
+    });
+}
+
+function editar(id, descripcion){
+    document.getElementById('id').value = id;
+    document.getElementById('descripcion').value = descripcion;
+}
+
+function actualizar(){
+    let id = document.getElementById('id').value;
+    let descripcion = document.getElementById('descripcion').value;
+
+    fetch('/categoria-actualizar/'+id,{
+        method:'PUT',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({descripcion})
+    })
+    .then(()=> {
+        cargar();
+        limpiar();
+    });
+}
+
+function eliminar(id){
+    fetch('/categoria-eliminar/'+id,{
+        method:'DELETE'
+    })
+    .then(()=> cargar());
+}
+
+function limpiar(){
+    document.getElementById('id').value='';
+    document.getElementById('descripcion').value='';
+}
+
+cargar();
+
+</script>
+
+</body>
+</html>
